@@ -7,6 +7,7 @@ use web_sys::{
     WebGl2RenderingContext, 
     WebGlShader, 
     WebGlVertexArrayObject,
+    window
 };
 
 pub mod webgl;
@@ -22,12 +23,28 @@ pub fn start() -> Result<(), JsValue> {
         .unwrap();
 
     let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+    let window = window().ok_or("Failed to access Window API")?; 
+
+    let inner_height = window
+        .inner_height()?
+        .as_f64()
+        .unwrap() as i32; 
+
+    let inner_width = window
+        .inner_width()?
+        .as_f64()
+        .unwrap() as i32; 
+
+    canvas.set_width(inner_width as u32);
+    canvas.set_height(inner_height as u32);
 
     let context = canvas
         .get_context("webgl2")?
         .unwrap()
         .dyn_into::<WebGl2RenderingContext>()?;
     
+    context.viewport(0, 0, inner_width, inner_height);
+
     let vert_shader = webgl::shader_from_url(
         &context, 
         WebGl2RenderingContext::VERTEX_SHADER,
@@ -39,6 +56,8 @@ pub fn start() -> Result<(), JsValue> {
         WebGl2RenderingContext::FRAGMENT_SHADER,
         "../shaders/frag_shader.glsl"
     )?;
+
+    
 
     let program = webgl::link_program(&context, &vert_shader, &frag_shader)?;
     context.use_program(Some(&program));
@@ -75,7 +94,5 @@ pub fn start() -> Result<(), JsValue> {
 
     Ok(())
 
-
-    
 }
  

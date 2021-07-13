@@ -2,15 +2,12 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 
 use web_sys::{
-    Element, 
-    WebGlProgram, 
-    WebGl2RenderingContext, 
-    WebGlShader, 
-    WebGlVertexArrayObject,
+    WebGl2RenderingContext,
     window
 };
 
 pub mod webgl;
+pub mod glhandler; 
 
 #[wasm_bindgen(start)]
 pub fn start() -> Result<(), JsValue> {
@@ -95,4 +92,3 @@ pub fn start() -> Result<(), JsValue> {
     Ok(())
 
 }
- 
